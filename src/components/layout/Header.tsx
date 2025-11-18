@@ -13,6 +13,7 @@ export default function Header() {
     { path: '/mood-matching', label: '기분 매칭', color: '#FF1B8D', hoverColor: '#FF4DB8' },
     { path: '/events', label: '이벤트', color: '#FFE400', hoverColor: '#FFED4E' },
     { path: '/cafe', label: '카페', color: '#00FFC6', hoverColor: '#4DFFDB' },
+    { path: '/books', label: '책 소개', color: '#8B5CF6', hoverColor: '#A78BFA' },
     { path: '/profile', label: '프로필', color: '#B794F4', hoverColor: '#D4BCFF' },
     { path: '/design-system', label: '디자인 시스템', color: '#FF1B8D', hoverColor: '#00FFC6' },
   ];
