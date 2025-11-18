@@ -5,8 +5,11 @@ import { ToastProvider } from './contexts/ToastContext';
 import { MoodProvider } from './contexts/MoodContext';
 
 function App() {
+  // Use base path for GitHub Pages deployment
+  const basename = import.meta.env.BASE_URL;
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <ToastProvider>
         <MoodProvider>
           <Routes>
