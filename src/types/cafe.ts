@@ -43,3 +43,31 @@ export interface MoodHistory {
   mood: CafeMood;
   percentage: number;
 }
+
+export interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  album?: string;
+  duration: string;
+  genre: string;
+  lyrics?: string[];
+  requestedBy?: string;
+}
+
+export interface SongQueue {
+  id: string;
+  song: Song;
+  requestedBy: string;
+  timestamp: number;
+  priority: 'normal' | 'vip';
+}
+
+export interface Playlist {
+  id: string;
+  name: string;
+  genre: string;
+  songs: Song[];
+  color: string;
+  icon: string;
+}

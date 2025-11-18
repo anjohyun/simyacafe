@@ -1,4 +1,4 @@
-import { MoodOption, CurrentCafeState, TimeSlot, CafeMood } from '../types/cafe';
+import { MoodOption, CurrentCafeState, TimeSlot, CafeMood, Playlist } from '../types/cafe';
 
 export const moodOptions: MoodOption[] = [
   {
@@ -68,3 +68,135 @@ export const initialVotes: Record<CafeMood, number> = {
   focus: 18,
   freestyle: 12,
 };
+
+// Mock Playlists
+export const mockPlaylists: Playlist[] = [
+  {
+    id: 'jazz',
+    name: '차분한 재즈',
+    genre: 'Jazz',
+    color: '#3B82F6',
+    icon: '🎷',
+    songs: [
+      {
+        id: 'jazz1',
+        title: 'Nocturne in E-flat major',
+        artist: 'Bill Evans Trio',
+        album: 'Portrait in Jazz',
+        duration: '4:23',
+        genre: 'Jazz',
+        lyrics: ['부드러운 피아노 선율이', '밤의 고요를 채웁니다', '재즈의 명곡을 감상하세요'],
+      },
+      {
+        id: 'jazz2',
+        title: 'Blue in Green',
+        artist: 'Miles Davis',
+        album: 'Kind of Blue',
+        duration: '5:27',
+        genre: 'Jazz',
+      },
+      {
+        id: 'jazz3',
+        title: 'Take Five',
+        artist: 'Dave Brubeck Quartet',
+        duration: '5:24',
+        genre: 'Jazz',
+      },
+    ],
+  },
+  {
+    id: 'lofi',
+    name: '집중 로파이',
+    genre: 'Lo-fi',
+    color: '#10B981',
+    icon: '🎹',
+    songs: [
+      {
+        id: 'lofi1',
+        title: 'Midnight Study',
+        artist: 'Chillhop Beats',
+        duration: '3:15',
+        genre: 'Lo-fi',
+      },
+      {
+        id: 'lofi2',
+        title: 'Coffee Shop Vibes',
+        artist: 'Lo-fi Girl',
+        duration: '2:48',
+        genre: 'Lo-fi',
+      },
+      {
+        id: 'lofi3',
+        title: 'Rainy Day',
+        artist: 'Homework Radio',
+        duration: '4:02',
+        genre: 'Lo-fi',
+      },
+    ],
+  },
+  {
+    id: 'dance',
+    name: '에너지 댄스',
+    genre: 'Electronic',
+    color: '#FF1B8D',
+    icon: '🎵',
+    songs: [
+      {
+        id: 'dance1',
+        title: 'Midnight City',
+        artist: 'M83',
+        duration: '4:04',
+        genre: 'Electronic',
+      },
+      {
+        id: 'dance2',
+        title: 'One More Time',
+        artist: 'Daft Punk',
+        duration: '5:20',
+        genre: 'Electronic',
+      },
+      {
+        id: 'dance3',
+        title: 'Strobe',
+        artist: 'deadmau5',
+        duration: '10:37',
+        genre: 'Electronic',
+      },
+    ],
+  },
+  {
+    id: 'ballad',
+    name: '감성 발라드',
+    genre: 'Ballad',
+    color: '#8B5CF6',
+    icon: '🎸',
+    songs: [
+      {
+        id: 'ballad1',
+        title: '밤편지',
+        artist: '아이유',
+        duration: '4:16',
+        genre: 'K-Ballad',
+        lyrics: [
+          '이 밤 그날의 반딧불을',
+          '당신의 창 가까이 날려 보낼게요',
+          '사랑한다는 말이에요',
+        ],
+      },
+      {
+        id: 'ballad2',
+        title: 'Someone Like You',
+        artist: 'Adele',
+        duration: '4:45',
+        genre: 'Ballad',
+      },
+      {
+        id: 'ballad3',
+        title: '좋니',
+        artist: '윤종신',
+        duration: '4:28',
+        genre: 'K-Ballad',
+      },
+    ],
+  },
+];
