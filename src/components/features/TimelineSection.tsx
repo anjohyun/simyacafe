@@ -62,7 +62,6 @@ const stages: Stage[] = [
 
 export default function TimelineSection() {
   const [selectedStage, setSelectedStage] = useState<Stage | null>(null);
-  const [activeStage, setActiveStage] = useState(0);
 
   const stage1Observer = useIntersectionObserver({ threshold: 0.5, freezeOnceVisible: true });
   const stage2Observer = useIntersectionObserver({ threshold: 0.5, freezeOnceVisible: true });
