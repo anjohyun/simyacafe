@@ -56,7 +56,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
         }}>
           {event.stage}
         </span>
-        {event.requiresVIP && (
+        {event.requiresVipCode && (
           <span style={{
             padding: '6px 14px',
             background: 'rgba(255,228,0,0.2)',
@@ -198,28 +198,30 @@ export default function EventCard({ event, onClick }: EventCardProps) {
       </div>
 
       {/* Tags */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '8px',
-      }}>
-        {event.tags.map((tag, index) => (
-          <span
-            key={index}
-            style={{
-              padding: '6px 14px',
-              backgroundColor: '#0A0A0A',
-              borderRadius: '20px',
-              fontSize: '12px',
-              color: '#BBBBBB',
-              fontWeight: '600',
-              border: '1px solid #333333',
-            }}
-          >
-            #{tag}
-          </span>
-        ))}
-      </div>
+      {event.tags && event.tags.length > 0 && (
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+        }}>
+          {event.tags.map((tag, index) => (
+            <span
+              key={index}
+              style={{
+                padding: '6px 14px',
+                backgroundColor: '#0A0A0A',
+                borderRadius: '20px',
+                fontSize: '12px',
+                color: '#BBBBBB',
+                fontWeight: '600',
+                border: '1px solid #333333',
+              }}
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

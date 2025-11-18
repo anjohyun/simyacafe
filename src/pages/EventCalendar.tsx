@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Event, EventStage, MOCK_EVENTS } from '../types/event';
+import { Event, EventStage } from '../types/event';
+import { mockEvents } from '../data/mockEvents';
 import EventCard from '../components/features/events/EventCard';
 import EventDetailModal from '../components/features/events/EventDetailModal';
 
@@ -11,7 +12,7 @@ export default function EventCalendar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stageFilter, setStageFilter] = useState<EventStage | 'all'>('all');
 
-  const filteredEvents = MOCK_EVENTS.filter((event) => {
+  const filteredEvents = mockEvents.filter((event) => {
     if (stageFilter === 'all') return true;
     return event.stage === stageFilter;
   }).sort((a, b) => a.date.getTime() - b.date.getTime());
