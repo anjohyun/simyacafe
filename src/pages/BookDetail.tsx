@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { mockBookCards, mockComments } from '../data/mockBooks';
 import { formatDistanceToNow } from 'date-fns';
@@ -9,6 +9,8 @@ import { ShareContent } from '../types/share';
 import { ReactionBar } from '../components/social';
 import { ReactionType, ReactionSummary } from '../types/social';
 import { useToast } from '../contexts/ToastContext';
+import { getUserBooks } from '../utils/bookStorage';
+import type { BookCard as BookCardType } from '../types/book';
 
 const moodColors = {
   kpop: '#FF1B8D',
@@ -26,6 +28,13 @@ export default function BookDetail() {
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState(mockComments.filter((c) => c.bookCardId === id));
   const [showShareModal, setShowShareModal] = useState(false);
+  const [userBooks, setUserBooks] = useState<BookCardType[]>([]);
+
+  // 사용자가 등록한 책 불러오기
+  useEffect(() => {
+    const books = getUserBooks();
+    setUserBooks(books);
+  }, []);
 
   // Reaction state
   const [userReaction, setUserReaction] = useState<ReactionType | undefined>(undefined);
@@ -39,7 +48,9 @@ export default function BookDetail() {
   });
 
   const bookCard = useMemo(() => {
-    const book = mockBookCards.find((b) => b.id === id);
+    // 사용자 책과 Mock 데이터 모두에서 검색
+    const allBooks = [...userBooks, ...mockBookCards];
+    const book = allBooks.find((b) => b.id === id);
     if (book) {
       // Initialize reactions based on book likes
       setReactions({
@@ -53,18 +64,19 @@ export default function BookDetail() {
       setBookmarkCount(book.bookmarkCount);
     }
     return book;
-  }, [id]);
+  }, [id, userBooks]);
 
   const relatedBooks = useMemo(() => {
     if (!bookCard) return [];
-    return mockBookCards
+    const allBooks = [...userBooks, ...mockBookCards];
+    return allBooks
       .filter(
         (b) =>
           b.id !== bookCard.id &&
           b.moodTags.some((tag) => bookCard.moodTags.includes(tag))
       )
       .slice(0, 3);
-  }, [bookCard]);
+  }, [bookCard, userBooks]);
 
   if (!bookCard) {
     return (

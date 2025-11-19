@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { ISBNScanner } from '../components/scanner';
 import { searchBookByISBN } from '../utils/bookApi';
-import type { NightType, ReadingTime, BookMood } from '../types/book';
+import { addUserBook, getCurrentUser } from '../utils/bookStorage';
+import type { NightType, ReadingTime, BookMood, BookCard } from '../types/book';
 
 type MoodTag = BookMood;
 
@@ -131,8 +132,43 @@ export default function BookCreate() {
       return;
     }
 
-    toast.success('책이 성공적으로 등록되었습니다!');
-    navigate('/books');
+    try {
+      // 새로운 BookCard 생성
+      const currentUser = getCurrentUser();
+      const newBookCard: BookCard = {
+        id: `user-book-${Date.now()}`,
+        book: {
+          id: `book-${Date.now()}`,
+          isbn: formData.isbn,
+          title: formData.title,
+          author: formData.author,
+          publisher: formData.publisher,
+          coverImage: formData.coverImage || 'https://via.placeholder.com/200x300?text=No+Cover',
+        },
+        recommender: currentUser,
+        whyRecommend: formData.whyRecommend,
+        movingQuote: formData.movingQuote,
+        moodTags: formData.moodTags,
+        nightType: formData.nightType,
+        drinkingPreference: formData.drinkingPreference,
+        readingTime: formData.readingTime,
+        likes: 0,
+        commentCount: 0,
+        bookmarkCount: 0,
+        shareCount: 0,
+        createdAt: new Date(),
+        postedAtMidnight: new Date().getHours() >= 0 && new Date().getHours() < 6,
+      };
+
+      // 로컬 스토리지에 저장
+      addUserBook(newBookCard);
+
+      toast.success('책이 성공적으로 등록되었습니다! 🎉');
+      navigate('/books');
+    } catch (error) {
+      console.error('Failed to save book:', error);
+      toast.error('책 등록 중 오류가 발생했습니다.');
+    }
   };
 
   const renderBookInfoStep = () => (

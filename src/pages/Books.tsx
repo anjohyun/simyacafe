@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import BookCard from '../components/features/books/BookCard';
 import { mockBookCards, mockCurators } from '../data/mockBooks';
-import { BookMood, DrinkingPreference, ReadingTime } from '../types/book';
+import { BookMood, DrinkingPreference, ReadingTime, BookCard as BookCardType } from '../types/book';
+import { getUserBooks } from '../utils/bookStorage';
 
 const moodOptions: { id: BookMood; label: string; icon: string; color: string }[] = [
   { id: 'kpop', label: 'K-POP', icon: '🎵', color: '#FF1B8D' },
@@ -31,6 +32,13 @@ export default function Books() {
   );
   const [selectedTime, setSelectedTime] = useState<ReadingTime | null>(null);
   const [sortBy, setSortBy] = useState<'recent' | 'popular' | 'compatible'>('recent');
+  const [userBooks, setUserBooks] = useState<BookCardType[]>([]);
+
+  // 사용자가 등록한 책 불러오기
+  useEffect(() => {
+    const books = getUserBooks();
+    setUserBooks(books);
+  }, []);
 
   const toggleMood = (mood: BookMood) => {
     setSelectedMoods((prev) =>
@@ -39,7 +47,8 @@ export default function Books() {
   };
 
   const filteredBooks = useMemo(() => {
-    let books = [...mockBookCards];
+    // 사용자가 등록한 책과 Mock 데이터 합치기 (사용자 책이 먼저)
+    let books = [...userBooks, ...mockBookCards];
 
     // Filter by mood
     if (selectedMoods.length > 0) {
@@ -79,7 +88,7 @@ export default function Books() {
     }
 
     return books;
-  }, [selectedMoods, selectedDrinking, selectedTime, sortBy]);
+  }, [selectedMoods, selectedDrinking, selectedTime, sortBy, userBooks]);
 
   const trendingBooks = useMemo(() => {
     return [...mockBookCards].sort((a, b) => b.likes - a.likes).slice(0, 3);
