@@ -4,9 +4,10 @@ export default function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: '#1A1A1A',
-        borderTop: '1px solid #333333',
+        backgroundColor: '#0A0A0A',
+        borderTop: '2px solid #333333',
         marginTop: 'auto',
+        boxShadow: '0 -4px 20px rgba(0,0,0,0.5)',
       }}
     >
       <div
@@ -28,7 +29,7 @@ export default function Footer() {
         >
           <div
             style={{
-              color: '#999999',
+              color: '#BBBBBB',
               fontSize: '14px',
               fontWeight: '600',
             }}
