@@ -4,6 +4,11 @@ import { mockBookCards, mockComments } from '../data/mockBooks';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import BookCard from '../components/features/books/BookCard';
+import { ShareModal } from '../components/share';
+import { ShareContent } from '../types/share';
+import { ReactionBar } from '../components/social';
+import { ReactionType, ReactionSummary } from '../types/social';
+import { useToast } from '../contexts/ToastContext';
 
 const moodColors = {
   kpop: '#FF1B8D',
@@ -15,17 +20,36 @@ const moodColors = {
 export default function BookDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [isLiked, setIsLiked] = useState(false);
+  const toast = useToast();
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
   const [bookmarkCount, setBookmarkCount] = useState(0);
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState(mockComments.filter((c) => c.bookCardId === id));
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  // Reaction state
+  const [userReaction, setUserReaction] = useState<ReactionType | undefined>(undefined);
+  const [reactions, setReactions] = useState<ReactionSummary>({
+    empathy: 0,
+    willTry: 0,
+    together: 0,
+    moved: 0,
+    fascinating: 0,
+    total: 0,
+  });
 
   const bookCard = useMemo(() => {
     const book = mockBookCards.find((b) => b.id === id);
     if (book) {
-      setLikeCount(book.likes);
+      // Initialize reactions based on book likes
+      setReactions({
+        empathy: Math.floor(book.likes * 0.5),
+        willTry: Math.floor(book.likes * 0.2),
+        together: Math.floor(book.likes * 0.15),
+        moved: Math.floor(book.likes * 0.1),
+        fascinating: Math.floor(book.likes * 0.05),
+        total: book.likes,
+      });
       setBookmarkCount(book.bookmarkCount);
     }
     return book;
@@ -80,9 +104,60 @@ export default function BookDetail() {
 
   const primaryMoodColor = moodColors[bookCard.moodTags[0]];
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+  const shareContent: ShareContent = {
+    id: bookCard.id,
+    type: 'book',
+    title: bookCard.book.title,
+    description: bookCard.whyRecommend,
+    creatorName: bookCard.recommender.name,
+    creatorAvatar: bookCard.recommender.avatar,
+    mood: bookCard.moodTags[0],
+    moodColor: primaryMoodColor,
+    tags: bookCard.moodTags,
+    quote: bookCard.movingQuote,
+    stats: {
+      likes: reactions.total,
+      shares: bookCard.shareCount,
+    },
+    url: `${window.location.origin}/books/${bookCard.id}`,
+  };
+
+  const handleReaction = (type: ReactionType) => {
+    // Toggle off if same reaction
+    if (userReaction === type) {
+      setUserReaction(undefined);
+      setReactions((prev) => ({
+        ...prev,
+        [type === 'willTry' ? 'willTry' : type]: Math.max(0, prev[type === 'willTry' ? 'willTry' : type] - 1),
+        total: Math.max(0, prev.total - 1),
+      }));
+      toast.success('반응을 취소했습니다');
+    } else {
+      // Remove previous reaction
+      if (userReaction) {
+        setReactions((prev) => ({
+          ...prev,
+          [userReaction === 'willTry' ? 'willTry' : userReaction]: Math.max(0, prev[userReaction === 'willTry' ? 'willTry' : userReaction] - 1),
+        }));
+      }
+
+      // Add new reaction
+      setUserReaction(type);
+      setReactions((prev) => ({
+        ...prev,
+        [type === 'willTry' ? 'willTry' : type]: prev[type === 'willTry' ? 'willTry' : type] + 1,
+        total: userReaction ? prev.total : prev.total + 1,
+      }));
+
+      const reactionLabels: Record<ReactionType, string> = {
+        empathy: '공감해요',
+        willTry: '따라해볼게요',
+        together: '같이해요',
+        moved: '눈물나요',
+        fascinating: '신기해요',
+      };
+      toast.success(`${reactionLabels[type]}!`);
+    }
   };
 
   const handleBookmark = () => {
@@ -255,29 +330,16 @@ export default function BookDetail() {
               gap: '16px',
               justifyContent: 'center',
               marginTop: '32px',
+              flexWrap: 'wrap',
             }}
           >
-            <button
-              onClick={handleLike}
-              style={{
-                padding: '14px 32px',
-                background: isLiked
-                  ? `linear-gradient(90deg, ${primaryMoodColor}, #FF6B6B)`
-                  : 'rgba(255, 255, 255, 0.1)',
-                border: isLiked ? 'none' : '2px solid rgba(255, 255, 255, 0.2)',
-                borderRadius: '16px',
-                color: '#FFFFFF',
-                fontSize: '16px',
-                fontWeight: '800',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.3s ease',
-              }}
-            >
-              {isLiked ? '❤️' : '🤍'} 공감해요 ({likeCount})
-            </button>
+            <ReactionBar
+              reactions={reactions}
+              userReaction={userReaction}
+              onReact={handleReaction}
+              showLabels={true}
+              size="large"
+            />
 
             <button
               onClick={handleBookmark}
@@ -299,6 +361,26 @@ export default function BookDetail() {
               }}
             >
               {isBookmarked ? '🔖' : '📑'} 읽고 싶어요 ({bookmarkCount})
+            </button>
+
+            <button
+              onClick={() => setShowShareModal(true)}
+              style={{
+                padding: '14px 32px',
+                background: 'linear-gradient(90deg, #00FFC6, #FF1B8D)',
+                border: 'none',
+                borderRadius: '16px',
+                color: '#FFFFFF',
+                fontSize: '16px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              🔗 공유하기
             </button>
           </div>
         </div>
@@ -787,6 +869,13 @@ export default function BookDetail() {
           </div>
         )}
       </div>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        content={shareContent}
+      />
     </div>
   );
 }

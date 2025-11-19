@@ -95,8 +95,43 @@ export default function Books() {
         minHeight: '100vh',
         background: '#0A0A0A',
         padding: '80px 20px 40px',
+        position: 'relative',
       }}
     >
+      {/* Floating Action Button */}
+      <button
+        onClick={() => navigate('/books/create')}
+        style={{
+          position: 'fixed',
+          bottom: '40px',
+          right: '40px',
+          width: '70px',
+          height: '70px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #FF1B8D, #00FFC6)',
+          border: 'none',
+          boxShadow: '0 8px 24px rgba(255, 27, 141, 0.4)',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '32px',
+          zIndex: 100,
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1) rotate(90deg)';
+          e.currentTarget.style.boxShadow = '0 12px 32px rgba(255, 27, 141, 0.6)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(255, 27, 141, 0.4)';
+        }}
+        title="책 소개하기"
+      >
+        ✨
+      </button>
+
       <div
         style={{
           maxWidth: '1400px',

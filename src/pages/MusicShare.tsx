@@ -3,13 +3,24 @@ import { Song, SongQueue } from '../types/cafe';
 import { mockPlaylists } from '../data/mockCafe';
 import { useToast } from '../contexts/ToastContext';
 import { Modal } from '../components/common';
+import { ShareModal } from '../components/share';
+import { ShareContent } from '../types/share';
 
 export default function MusicShare() {
   const [songQueue, setSongQueue] = useState<SongQueue[]>([]);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [showLyricsModal, setShowLyricsModal] = useState(false);
+  const [showAddSongModal, setShowAddSongModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [songToShare, setSongToShare] = useState<Song | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState(mockPlaylists[0]);
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState(0);
+  const [newSongForm, setNewSongForm] = useState({
+    title: '',
+    artist: '',
+    genre: '',
+    duration: '',
+  });
   const toast = useToast();
 
   const handleRequestSong = (song: Song) => {
@@ -29,6 +40,46 @@ export default function MusicShare() {
     setShowLyricsModal(true);
   };
 
+  const handleShareSong = (song: Song) => {
+    setSongToShare(song);
+    setShowShareModal(true);
+  };
+
+  const handleAddCustomSong = () => {
+    if (!newSongForm.title || !newSongForm.artist || !newSongForm.genre || !newSongForm.duration) {
+      toast.error('모든 필드를 입력해주세요!');
+      return;
+    }
+
+    const customSong: Song = {
+      id: `custom-${Date.now()}`,
+      title: newSongForm.title,
+      artist: newSongForm.artist,
+      genre: newSongForm.genre,
+      duration: newSongForm.duration,
+    };
+
+    const newRequest: SongQueue = {
+      id: `queue-${Date.now()}`,
+      song: customSong,
+      requestedBy: '익명의 방문객',
+      timestamp: Date.now(),
+      priority: 'normal',
+    };
+
+    setSongQueue([...songQueue, newRequest]);
+    toast.success(`🎵 "${customSong.title}" 신청곡이 대기열에 추가되었습니다!`);
+
+    // Reset form and close modal
+    setNewSongForm({
+      title: '',
+      artist: '',
+      genre: '',
+      duration: '',
+    });
+    setShowAddSongModal(false);
+  };
+
   // Auto-advance song every 30 seconds for demo
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,6 +89,27 @@ export default function MusicShare() {
     }, 30000);
     return () => clearInterval(interval);
   }, [selectedPlaylist]);
+
+  // Create share content for the selected song
+  const shareContent: ShareContent | null = songToShare
+    ? {
+        id: songToShare.id,
+        type: 'music',
+        title: songToShare.title,
+        description: `${songToShare.artist}의 "${songToShare.title}" - ${selectedPlaylist.name} 플레이리스트에서`,
+        creatorName: '심야카페',
+        creatorAvatar: '🎵',
+        mood: selectedPlaylist.genre,
+        moodColor: selectedPlaylist.color,
+        tags: [selectedPlaylist.genre, songToShare.genre],
+        quote: songToShare.lyrics?.[0],
+        stats: {
+          likes: 0,
+          views: 0,
+        },
+        url: `${window.location.origin}/music`,
+      }
+    : null;
 
   return (
     <div style={{
@@ -81,6 +153,34 @@ export default function MusicShare() {
           border: '2px solid #333333',
           marginBottom: '32px',
         }}>
+          {/* Add Song Button */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: '16px',
+          }}>
+            <button
+              onClick={() => setShowAddSongModal(true)}
+              style={{
+                padding: '16px 32px',
+                fontSize: '16px',
+                fontWeight: '800',
+                background: 'linear-gradient(135deg, #FF1B8D, #00FFC6)',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span style={{ fontSize: '24px' }}>🎵</span>
+              신청곡 추가하기
+            </button>
+          </div>
+
           {/* Playlist Selector */}
           <div style={{
             display: 'flex',
@@ -308,6 +408,22 @@ export default function MusicShare() {
                         📝
                       </button>
                     )}
+                    <button
+                      onClick={() => handleShareSong(song)}
+                      style={{
+                        padding: '10px 16px',
+                        background: 'rgba(0, 255, 198, 0.2)',
+                        border: '2px solid #00FFC6',
+                        borderRadius: '10px',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      🔗
+                    </button>
                   </div>
                 </div>
               ))}
@@ -483,6 +599,217 @@ export default function MusicShare() {
             </button>
           </div>
         </Modal>
+      )}
+
+      {/* Add Song Modal */}
+      {showAddSongModal && (
+        <Modal isOpen={showAddSongModal} onClose={() => setShowAddSongModal(false)}>
+          <div style={{
+            padding: '40px',
+            maxWidth: '500px',
+            background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)',
+            borderRadius: '24px',
+          }}>
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '32px',
+            }}>
+              <div style={{
+                fontSize: '28px',
+                fontWeight: '900',
+                color: '#FFFFFF',
+                marginBottom: '8px',
+              }}>
+                🎵 신청곡 추가하기
+              </div>
+              <div style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: '#DDDDDD',
+              }}>
+                듣고 싶은 곡 정보를 입력하세요
+              </div>
+            </div>
+
+            {/* Form */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+            }}>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#DDDDDD',
+                  marginBottom: '8px',
+                }}>
+                  곡 제목 *
+                </label>
+                <input
+                  type="text"
+                  placeholder="예: Dynamite"
+                  value={newSongForm.title}
+                  onChange={(e) => setNewSongForm({ ...newSongForm, title: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '2px solid #333333',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#DDDDDD',
+                  marginBottom: '8px',
+                }}>
+                  아티스트 *
+                </label>
+                <input
+                  type="text"
+                  placeholder="예: BTS"
+                  value={newSongForm.artist}
+                  onChange={(e) => setNewSongForm({ ...newSongForm, artist: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '2px solid #333333',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#DDDDDD',
+                  marginBottom: '8px',
+                }}>
+                  장르 *
+                </label>
+                <input
+                  type="text"
+                  placeholder="예: K-POP"
+                  value={newSongForm.genre}
+                  onChange={(e) => setNewSongForm({ ...newSongForm, genre: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '2px solid #333333',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#DDDDDD',
+                  marginBottom: '8px',
+                }}>
+                  재생시간 *
+                </label>
+                <input
+                  type="text"
+                  placeholder="예: 3:19"
+                  value={newSongForm.duration}
+                  onChange={(e) => setNewSongForm({ ...newSongForm, duration: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '2px solid #333333',
+                    borderRadius: '12px',
+                    color: '#FFFFFF',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginTop: '32px',
+            }}>
+              <button
+                onClick={() => setShowAddSongModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '16px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '2px solid #333333',
+                  borderRadius: '12px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                취소
+              </button>
+              <button
+                onClick={handleAddCustomSong}
+                style={{
+                  flex: 1,
+                  padding: '16px',
+                  background: 'linear-gradient(90deg, #FF1B8D, #00FFC6)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                추가하기
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Share Modal */}
+      {shareContent && (
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          content={shareContent}
+        />
       )}
     </div>
   );

@@ -10,9 +10,10 @@ export default function Header() {
 
   const navLinks = [
     { path: '/', label: '홈', color: '#FFFFFF', hoverColor: '#00FFC6' },
+    { path: '/discover', label: '디스커버', color: '#FFE400', hoverColor: '#FFED4E' },
     { path: '/mood-matching', label: '기분 매칭', color: '#FF1B8D', hoverColor: '#FF4DB8' },
-    { path: '/events', label: '이벤트', color: '#FFE400', hoverColor: '#FFED4E' },
-    { path: '/reservation', label: '예약', color: '#00FFC6', hoverColor: '#4DFFDB' },
+    { path: '/events', label: '이벤트', color: '#00FFC6', hoverColor: '#4DFFDB' },
+    { path: '/reservation', label: '예약', color: '#8B5CF6', hoverColor: '#A78BFA' },
     { path: '/music', label: '음악 공유', color: '#FF1B8D', hoverColor: '#FF4DB8' },
     { path: '/books', label: '책 소개', color: '#8B5CF6', hoverColor: '#A78BFA' },
     { path: '/profile', label: '프로필', color: '#B794F4', hoverColor: '#D4BCFF' },

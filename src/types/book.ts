@@ -1,7 +1,7 @@
 export type BookMood = 'kpop' | 'ballad' | 'graffiti' | 'retro';
 export type DrinkingPreference = 'with-alcohol' | 'non-alcohol' | 'both';
-export type ReadingTime = 'evening' | 'late-night' | 'anytime';
-export type NightType = 'with-drink' | 'quiet-night' | 'with-friends' | 'alone-time';
+export type ReadingTime = 'morning' | 'afternoon' | 'evening' | 'late-night' | 'anytime';
+export type NightType = 'with-alcohol' | 'quiet-night' | 'with-friends' | 'alone-time';
 
 export interface BookAuthor {
   name: string;
