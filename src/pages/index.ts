@@ -4,3 +4,5 @@ export { default as EventCalendar } from './EventCalendar';
 export { default as Profile } from './Profile';
 export { default as Discover } from './Discover';
 export { default as BookCreate } from './BookCreate';
+export { default as Privacy } from './Privacy';
+export { default as Contact } from './Contact';

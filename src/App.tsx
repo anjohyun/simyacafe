@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout';
-import { Home, MoodMatching, EventCalendar, Profile, Discover, BookCreate } from './pages';
+import { Home, MoodMatching, EventCalendar, Profile, Discover, BookCreate, Privacy, Contact } from './pages';
 import Books from './pages/Books';
 import BookDetail from './pages/BookDetail';
 import Reservation from './pages/Reservation';
@@ -28,6 +28,8 @@ function App() {
               <Route path="books/create" element={<BookCreate />} />
               <Route path="books/:id" element={<BookDetail />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="privacy" element={<Privacy />} />
+              <Route path="contact" element={<Contact />} />
             </Route>
           </Routes>
         </MoodProvider>
