@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { musicGenres, MusicGenre } from '../data/genres';
 import { GenreCard } from '../components/taste';
 import { calculateMoodProfile, generateMoodDescription, getWeightPercentages } from '../utils/moodCalculator';
@@ -6,6 +7,7 @@ import { useToast } from '../contexts/ToastContext';
 
 export default function MoodMatching() {
   const toast = useToast();
+  const navigate = useNavigate();
   const [selectedGenres, setSelectedGenres] = useState<MusicGenre[]>([]);
   const [showResult, setShowResult] = useState(false);
 
@@ -45,6 +47,11 @@ export default function MoodMatching() {
     setSelectedGenres([]);
     setShowResult(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleStartExpandedQuiz = () => {
+    // ExpandedQuizPage로 이동
+    navigate('/expanded-quiz');
   };
 
   const moodProfile = selectedGenres.length === MAX_SELECTIONS
@@ -409,10 +416,39 @@ export default function MoodMatching() {
               fontSize: '16px',
               color: '#999999',
               fontWeight: '600',
+              marginBottom: '24px',
             }}
           >
             선택 순서가 중요해요! (1순위 50% → 2순위 30% → 3순위 15% → 4순위 5%)
           </p>
+
+          {/* Expanded Quiz Button */}
+          <button
+            onClick={handleStartExpandedQuiz}
+            style={{
+              padding: '16px 40px',
+              background: 'linear-gradient(135deg, #8B5CF6, #00FFC6)',
+              border: '2px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '16px',
+              color: '#FFFFFF',
+              fontSize: '18px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+              marginTop: '10px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 30px rgba(139, 92, 246, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(139, 92, 246, 0.4)';
+            }}
+          >
+            ✨ 확장된 무드 퀴즈 체험하기
+          </button>
         </div>
 
         {/* 선택 진행 상태 */}

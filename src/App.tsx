@@ -5,6 +5,9 @@ import Books from './pages/Books';
 import BookDetail from './pages/BookDetail';
 import Reservation from './pages/Reservation';
 import MusicShare from './pages/MusicShare';
+import ResultPage from './pages/ResultPage';
+import TasteQuizPage from './pages/TasteQuizPage';
+import ExpandedQuizPage from './pages/ExpandedQuizPage';
 import { ToastProvider } from './contexts/ToastContext';
 import { MoodProvider } from './contexts/MoodContext';
 
@@ -21,6 +24,9 @@ function App() {
               <Route index element={<Home />} />
               <Route path="discover" element={<Discover />} />
               <Route path="mood-matching" element={<MoodMatching />} />
+              <Route path="taste-quiz" element={<TasteQuizPage />} />
+              <Route path="expanded-quiz" element={<ExpandedQuizPage />} />
+              <Route path="result" element={<ResultPage />} />
               <Route path="events" element={<EventCalendar />} />
               <Route path="reservation" element={<Reservation />} />
               <Route path="music" element={<MusicShare />} />

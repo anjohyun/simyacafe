@@ -29,12 +29,15 @@ export default function EventCalendar() {
 
   return (
     <div style={{
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '40px 20px',
-      backgroundColor: '#0A0A0A',
       minHeight: '100vh',
+      backgroundColor: '#0A0A0A',
+      paddingTop: '80px',
     }}>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '40px 20px',
+      }}>
       {/* Header */}
       <div style={{
         marginBottom: '40px',
@@ -402,6 +405,7 @@ export default function EventCalendar() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
+      </div>
     </div>
   );
 }
